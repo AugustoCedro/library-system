@@ -3,18 +3,35 @@ package model.dao.impl;
 import db.DB;
 import db.DbException;
 import model.dao.BookDao;
+import model.dao.ClientDao;
 import model.dao.DaoFactory;
 import model.dao.LoanDao;
 import model.entities.Book;
+import model.entities.Client;
+import model.entities.Genre;
 import model.entities.Loan;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LoanDaoJDBC implements LoanDao {
     private static Connection conn = null;
 
     public LoanDaoJDBC(Connection conn) {
         this.conn = conn;
+    }
+
+    private Loan instantiateLoan(ResultSet rs, Book book, Client client) throws SQLException {
+        Loan obj = new Loan();
+        obj.setId(rs.getInt("Id"));
+        obj.setBook(book);
+        obj.setClient(client);
+        obj.setLoanDate(rs.getDate("Loan_Date").toLocalDate());
+        obj.setReturnDate(rs.getDate("Return_Date").toLocalDate());
+        return obj;
     }
 
     @Override
@@ -57,6 +74,48 @@ public class LoanDaoJDBC implements LoanDao {
         finally {
             DB.closeStatement(st);
             DB.setAutoCommit(conn);
+        }
+    }
+
+    @Override
+    public List<Loan> findAll() {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        List<Loan> list = new ArrayList<>();
+        Map<Integer,Book> bookMap = new HashMap<>();
+        Map<Integer,Client> clientMap = new HashMap<>();
+        BookDao bookDao = DaoFactory.createBookDao();
+        ClientDao clientDao = DaoFactory.createClientDao();
+        try{
+            st = conn.prepareStatement("SELECT loans.*, book.Title as Book_Title,client.Name as Client_Name \n" +
+                    "FROM loans INNER JOIN book\n" +
+                    "ON book.Id = loans.Book_Id\n" +
+                    "INNER JOIN client\n" +
+                    "ON client.Id = loans.Client_Id");
+
+            rs = st.executeQuery();
+            while(rs.next()){
+
+                Book book = bookMap.get(rs.getInt("Book_Id"));
+                Client client = clientMap.get(rs.getInt("Client_Id"));
+                if(book == null){
+                    book = bookDao.findById(rs.getInt("Book_Id"));
+                    bookMap.put(rs.getInt("Book_Id"),book);
+                }
+                if (client == null) {
+                    client = clientDao.findById(rs.getInt("Client_Id"));
+                    clientMap.put(rs.getInt("Client_Id"),client);
+                }
+                Loan loan = instantiateLoan(rs,book,client);
+                list.add(loan);
+            }
+            return list;
+        }catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
         }
     }
 }

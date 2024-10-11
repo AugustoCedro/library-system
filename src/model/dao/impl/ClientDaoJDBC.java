@@ -99,4 +99,114 @@ public class ClientDaoJDBC implements ClientDao {
             DB.closeStatement(st);
         }
     }
+
+    @Override
+    public List<Client> findByName(String name) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        List<Client> list = new ArrayList<>();
+        try{
+            st = conn.prepareStatement("SELECT * FROM client " +
+                    "WHERE Name = ?");
+
+            st.setString(1,name);
+
+            rs = st.executeQuery();
+            while(rs.next()){
+                Client client = instantiateClient(rs);
+                list.add(client);
+            }
+            return list;
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
+
+    @Override
+    public Client findById(Integer id) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try{
+            st = conn.prepareStatement("SELECT * FROM client " +
+                    "WHERE Id = ?");
+
+            st.setInt(1,id);
+
+            rs = st.executeQuery();
+            if(rs.next()){
+                Client client = instantiateClient(rs);
+                return client;
+            }
+            return null;
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("DELETE FROM client " +
+                    "WHERE Id = ?");
+
+            st.setInt(1,id);
+            st.executeUpdate();
+
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeStatement(st);
+        }
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("DELETE FROM client " +
+                    "WHERE Email = ?");
+
+            st.setString(1,email);
+            st.executeUpdate();
+
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+
+            DB.closeStatement(st);
+        }
+    }
+
+    @Override
+    public void update(Client client) {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("UPDATE client\n" +
+                            "SET Name = ?, Email = ? \n" +
+                            "WHERE Id = ?;"
+                    );
+
+            st.setString(1,client.getName());
+            st.setString(2,client.getEmail());
+            st.setInt(3,client.getId());
+
+            st.executeUpdate();
+
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+
+            DB.closeStatement(st);
+        }
+    }
 }
