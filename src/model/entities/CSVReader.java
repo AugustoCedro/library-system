@@ -42,5 +42,22 @@ public class CSVReader {
             throw new RuntimeException(e);
         }
     }
+
+    public static List<Client> readClients(String fileName){
+        String file = filePath + fileName;
+        List<Client> clients = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+            String line = br.readLine();
+            while(line != null) {
+                String[] fields = line.split(",");
+                Client client = new Client(null, fields[0], fields[1]);
+                clients.add(client);
+                line = br.readLine();
+            }
+            return clients;
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

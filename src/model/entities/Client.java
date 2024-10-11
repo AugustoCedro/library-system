@@ -4,15 +4,14 @@ public class Client {
     private Integer id;
     private String name;
     private String email;
-    private Integer phoneNumber;
-    private Book rentedBook;
 
-    public Client(Integer id, String name, String email, Integer phoneNumber, Book rentedBook) {
+    public Client() {
+    }
+
+    public Client(Integer id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.rentedBook = rentedBook;
     }
 
     public Integer getId() {
@@ -39,19 +38,12 @@ public class Client {
         this.email = email;
     }
 
-    public Integer getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(Integer phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Book getRentedBook() {
-        return rentedBook;
-    }
-
-    public void setRentedBook(Book rentedBook) {
-        this.rentedBook = rentedBook;
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
