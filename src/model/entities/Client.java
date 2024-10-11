@@ -1,6 +1,8 @@
 package model.entities;
 
-public class Client {
+import java.io.Serializable;
+
+public class Client implements Serializable {
     private Integer id;
     private String name;
     private String email;

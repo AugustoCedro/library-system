@@ -1,11 +1,11 @@
 package model.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
-import java.util.Date;
 
-
-public class Loan {
+public class Loan implements Serializable {
     private Integer id;
     private Book book;
     private Client client;
@@ -73,5 +73,18 @@ public class Loan {
                 ", loanDate=" + loanDate +
                 ", returnDate=" + returnDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Loan loan = (Loan) o;
+        return Objects.equals(id, loan.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

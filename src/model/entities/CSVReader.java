@@ -3,18 +3,19 @@ package model.entities;
 import model.dao.BookDao;
 import model.dao.ClientDao;
 import model.dao.DaoFactory;
-import model.dao.impl.BookDaoJDBC;
+
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.io.Serializable;
+
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVReader {
+public class CSVReader  implements Serializable {
     private static String filePath = "D:\\projetos java\\library-system\\src\\application\\resources\\";
     public static List<Genre> readGenres(String fileName) {
         String file = filePath + fileName;
