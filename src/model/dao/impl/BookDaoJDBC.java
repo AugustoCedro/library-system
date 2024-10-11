@@ -76,7 +76,7 @@ public class BookDaoJDBC implements BookDao {
     public void update(Book book) {
         PreparedStatement st = null;
         try{
-            st = conn.prepareStatement("UPDATE book\n" +
+            st = conn.prepareStatement("UPDATE book\n " +
                     "SET Title = ?,\n" +
                     "Author = ?,\n" +
                     "Genre_Id = ? ,\n" +
@@ -102,7 +102,7 @@ public class BookDaoJDBC implements BookDao {
     public void deleteById(int id) {
         PreparedStatement st = null;
         try{
-            st = conn.prepareStatement("DELETE FROM book" +
+            st = conn.prepareStatement("DELETE FROM book " +
                     "WHERE Id = ?");
 
 
@@ -123,8 +123,10 @@ public class BookDaoJDBC implements BookDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
-            st = conn.prepareStatement("SELECT FROM book" +
-                            "WHERE Id = ?"
+            st = conn.prepareStatement("SELECT book.*,genre.Name as Genre " +
+                    "FROM book INNER JOIN genre " +
+                            "ON book.Genre_Id = genre.Id " +
+                            "WHERE book.Id = ?"
             );
 
             st.setInt(1, id);
@@ -149,9 +151,9 @@ public class BookDaoJDBC implements BookDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
-            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre" +
-                    "FROM book INNER JOIN genre" +
-                    "ON book.Genre_Id = genre.Id" +
+            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre " +
+                    "FROM book INNER JOIN genre " +
+                    "ON book.Genre_Id = genre.Id " +
                     "WHERE book.Title = ?"
             );
 
@@ -179,10 +181,10 @@ public class BookDaoJDBC implements BookDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
-            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre" +
-                    "FROM book INNER JOIN genre" +
-                    "ON book.Genre_Id = genre.Id" +
-                    "WHERE Author = ?"
+            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre " +
+                    "FROM book INNER JOIN genre " +
+                    "ON book.Genre_Id = genre.Id " +
+                    "WHERE book.Author = ?"
             );
 
             st.setString(1, author);
@@ -196,6 +198,7 @@ public class BookDaoJDBC implements BookDao {
                 }
                 Book obj = instantiateBook(rs,genre);
                 list.add(obj);
+                return list;
             }
             return list;
         }catch (SQLException e){
@@ -213,9 +216,9 @@ public class BookDaoJDBC implements BookDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
-            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre" +
-                    "FROM book INNER JOIN genre" +
-                    "ON book.Genre_Id = genre.Id" +
+            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre " +
+                    "FROM book INNER JOIN genre " +
+                    "ON book.Genre_Id = genre.Id " +
                     "WHERE genre.Name = ?"
             );
 
@@ -247,10 +250,10 @@ public class BookDaoJDBC implements BookDao {
         PreparedStatement st = null;
         ResultSet rs = null;
         try{
-            st = conn.prepareStatement("SELECT book.*, genre.Name as Genre" +
-                    "FROM book INNER JOIN genre" +
-                    "ON book.Genre_Id = genre.Id" +
-                    "ORDER BY Title"
+            st = conn.prepareStatement("SELECT  book.*, genre.Name as Genre " +
+                    "FROM book INNER JOIN genre " +
+                    "ON book.Genre_Id = genre.Id " +
+                    " ORDER BY Title"
             );
 
             rs = st.executeQuery();

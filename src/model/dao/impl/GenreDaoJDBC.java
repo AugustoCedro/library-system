@@ -16,6 +16,7 @@ public class GenreDaoJDBC implements GenreDao {
         this.conn = conn;
     }
 
+
     private Genre instantiateGenre(ResultSet rs) throws SQLException {
         Genre obj = new Genre();
         int id = rs.getInt("Id");
