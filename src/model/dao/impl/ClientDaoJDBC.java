@@ -75,4 +75,28 @@ public class ClientDaoJDBC implements ClientDao {
             DB.closeStatement(st);
         }
     }
+
+    @Override
+    public Client findByEmail(String email) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try{
+            st = conn.prepareStatement("SELECT * FROM client " +
+                    "WHERE Email = ?");
+
+            st.setString(1,email);
+
+            rs = st.executeQuery();
+            if(rs.next()){
+                Client client = instantiateClient(rs);
+                return client;
+            }
+            return null;
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
 }

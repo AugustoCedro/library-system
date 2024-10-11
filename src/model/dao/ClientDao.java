@@ -7,4 +7,5 @@ import java.util.List;
 public interface ClientDao {
     List<Client> findAll();
     void insert(Client client);
+    Client findByEmail(String email);
 }

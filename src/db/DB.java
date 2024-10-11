@@ -31,7 +31,15 @@ public class DB {
             }
         }
     }
-
+    public static void setAutoCommit(Connection conn){
+        try{
+            if(conn != null){
+                conn.setAutoCommit(true);
+            }
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }
+    }
 
     private static Properties loadProperties(){
         try(FileInputStream fs = new FileInputStream("db.properties")){

@@ -21,4 +21,8 @@ public class ClientDaoJDBCTest {
 //        }
 //        assertEquals(clientList.size(),clientDao.findAll().size());
     }
+    @Test
+    public void findByEmail(){
+        assertEquals("ana.silva@example.com",clientDao.findByEmail("ana.silva@example.com").getEmail());
+    }
 }

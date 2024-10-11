@@ -1,9 +1,16 @@
 package model.entities;
 
+import model.dao.BookDao;
+import model.dao.ClientDao;
+import model.dao.DaoFactory;
+import model.dao.impl.BookDaoJDBC;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +62,26 @@ public class CSVReader {
                 line = br.readLine();
             }
             return clients;
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Loan> readLoans(String fileName){
+        String file = filePath + fileName;
+        BookDao bookDao = DaoFactory.createBookDao();
+        ClientDao clientDao = DaoFactory.createClientDao();
+        List<Loan> loans = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+            String line = br.readLine();
+            while(line != null) {
+                String[] fields = line.split(",");
+                LocalDate date = LocalDate.parse(fields[2]);
+                Loan loan = new Loan(null,bookDao.findByTitle(fields[0]),clientDao.findByEmail(fields[1]),date);
+                loans.add(loan);
+                line = br.readLine();
+            }
+            return loans;
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
