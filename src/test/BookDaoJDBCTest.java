@@ -65,6 +65,8 @@ public class BookDaoJDBCTest{
 
     @Test
     public void findByGenre() {
+        List<Book> list = bookDao.findByGenre("Fantasy");
+        assertEquals(6,list.size());
     }
 
     @Test
