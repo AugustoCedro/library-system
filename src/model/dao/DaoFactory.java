@@ -1,10 +1,7 @@
 package model.dao;
 
-import model.dao.impl.BookDaoJDBC;
-import model.dao.impl.ClientDaoJDBC;
-import model.dao.impl.GenreDaoJDBC;
+import model.dao.impl.*;
 import db.DB;
-import model.dao.impl.LoanDaoJDBC;
 
 
 public class DaoFactory {
@@ -19,5 +16,8 @@ public class DaoFactory {
     }
     public static LoanDao createLoanDao(){
         return new LoanDaoJDBC(DB.getConnection());
+    }
+    public static ManagerDao createManagerDao(){
+        return new ManagerDaoJDBC(DB.getConnection());
     }
 }

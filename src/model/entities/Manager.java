@@ -5,20 +5,25 @@ import model.dao.ClientDao;
 import model.dao.DaoFactory;
 import model.dao.LoanDao;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Manager  {
+public class Manager implements Serializable {
 
     private Integer id;
     private String name;
     private String email;
-    private Integer phone;
+    private String phone;
     private String password;
     private static BookDao bookDao =  DaoFactory.createBookDao();
     private static ClientDao clientDao = DaoFactory.createClientDao();
     private static LoanDao loanDao = DaoFactory.createLoanDao();
-    public Manager(Integer id, String name, String email, Integer phone, String password) {
+
+    public Manager(){}
+
+
+    public Manager(Integer id, String name, String email, String phone, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -50,11 +55,11 @@ public class Manager  {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -64,6 +69,30 @@ public class Manager  {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static BookDao getBookDao() {
+        return bookDao;
+    }
+
+    public static void setBookDao(BookDao bookDao) {
+        Manager.bookDao = bookDao;
+    }
+
+    public static ClientDao getClientDao() {
+        return clientDao;
+    }
+
+    public static void setClientDao(ClientDao clientDao) {
+        Manager.clientDao = clientDao;
+    }
+
+    public static LoanDao getLoanDao() {
+        return loanDao;
+    }
+
+    public static void setLoanDao(LoanDao loanDao) {
+        Manager.loanDao = loanDao;
     }
 
     public void addBook(Book book) {
@@ -139,5 +168,16 @@ public class Manager  {
     }
     public List<Loan> findByReturnDate(LocalDate date){
         return loanDao.findByReturnDate(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Manager{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
