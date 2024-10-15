@@ -1,10 +1,8 @@
 package model.entities;
 
 import model.dao.*;
-import model.exceptions.BookLoanedException;
 import model.exceptions.InvalidInputException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -135,7 +133,7 @@ public class Library {
                 } else if (n == 3) {
                     return false;
                 } else {
-                    throw new InvalidInputException("Error: try again with another option");
+                    System.out.println("Error: try again with another option");
                 }
                 return false;
             } catch (Exception e) {
@@ -152,17 +150,20 @@ public class Library {
             if(n == 1){
                 bookOperations();
             }
+            if(n == 2){
+                clientOperations();
+            }
         }
     }
 
     protected static void bookOperations() {
-        manager = new Manager();
         while (true) {
             System.out.println("1 -> Insert a Book to Library");
             System.out.println("2 -> Remove a Book from Library");
             System.out.println("3 -> Update the Quantity of a specific Book from Library");
             System.out.println("4 -> Get all Books from Library");
             System.out.println("5 -> Search a specific Book from Library");
+            System.out.println("6 -> Return to Main Menu");
             int n = sc.nextInt();
             sc.nextLine();
             if (n == 1) {
@@ -223,13 +224,14 @@ public class Library {
             } if (n == 5) {
                 findBooksOperations();
             }
+            if(n == 6){
+                break;
+            }
         }
     }
     protected static void findBooksOperations(){
-
         Book b;
         List<Book> list;
-
         System.out.println("1 -> Find by Book Id");
         System.out.println("2 -> Find by Book Title");
         System.out.println("3 -> Find by Book Author");
@@ -288,6 +290,121 @@ public class Library {
             }
         }
     }
+    protected static void clientOperations(){
+        while(true){
+            System.out.println("1 -> Insert a Client to Library");
+            System.out.println("2 -> Remove a Client from Library ");
+            System.out.println("3 -> Update data from a Client");
+            System.out.println("4 -> Search All Clients");
+            System.out.println("5 -> Search a specific Client from Library");
+            System.out.println("6 -> Return to Main Menu");
+
+            int n = sc.nextInt();
+            sc.nextLine();
+            if(n == 1){
+                System.out.print("Name of the Client: ");
+                String name = sc.nextLine();
+                System.out.print("Email of the Client: ");
+                String email = sc.nextLine();
+                Client c = new Client(null,name,email);
+                if(clientExists(c)){
+                    clientDao.insert(c);
+                    System.out.println("Client added successfully!");
+                }else {
+                    System.out.println("Insert Error, Client already exists!");
+                }
+            }
+            if(n == 2){
+                System.out.print("Email of the Client: ");
+                String email = sc.nextLine();
+                Client c = clientDao.findByEmail(email);
+                if(!clientExists(c)){
+                    clientDao.deleteByEmail(email);
+                    System.out.println("Client removed successfully!");
+                }else{
+                    System.out.println("Remove error, Client not exists!");
+                }
+            }
+            if(n == 3){
+                System.out.print("Email of the Client that will be updated: ");
+                String email = sc.nextLine();
+                Client c = clientDao.findByEmail(email);
+                if(!clientExists(c)){
+                    System.out.print("New Name: ");
+                    String name = sc.nextLine();
+                    System.out.println("New email: ");
+                    email = sc.nextLine();
+                    Client c2 = new Client(c.getId(),name,email);
+                    clientDao.update(c2);
+                    System.out.println("Client updated sucessfully!");
+                }else{
+                    System.out.println("Update error, Client not exists!");
+                }
+            }
+            if(n == 4){
+                List<Client> list = clientDao.findAll();
+                System.out.println("===================");
+                for(Client c : list){
+                    System.out.println(c);
+                }
+                System.out.println("===================");
+            }
+            if(n == 5){
+                findClientsOperations();
+            }
+            if(n == 6){
+                break;
+            }
+        }
+    }
+    protected static void findClientsOperations(){
+
+        Client c;
+        List<Client> list;
+
+        System.out.println("1 -> Find by Client Id");
+        System.out.println("2 -> Find by Client Email");
+        System.out.println("3 -> Find by Client Name");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        if(n == 1){
+            System.out.print("Client Id: ");
+            int id = sc.nextInt();
+            c = clientDao.findById(id);
+            if(!clientExists(c)){
+                System.out.println(c);
+            }else{
+                System.out.println("Client not found");
+            }
+        }
+        if(n == 2){
+            System.out.print("Client Email: ");
+            String email = sc.nextLine();
+            c = clientDao.findByEmail(email);
+            if(!clientExists(c)){
+                System.out.println(c);
+            }else{
+                System.out.println("Client not found");
+            }
+        }
+        if(n == 3){
+            System.out.println("Client Name: ");
+            String name = sc.nextLine();
+            list = clientDao.findByName(name);
+            if(!list.isEmpty()){
+                System.out.println("===================");
+                for(Client client : list){
+                    System.out.println(client);
+                }
+                System.out.println("===================");
+            }else {
+                System.out.println("Client not found");
+            }
+        }
+
+    }
+
 
     protected static boolean bookExists(Book b){
         if(b != null){
@@ -311,6 +428,18 @@ public class Library {
         }
         else{
             return false;
+        }
+    }
+    protected static boolean clientExists(Client c){
+        if(c == null){
+            return true;
+        }
+        Client obj = clientDao.findByEmail(c.getEmail());
+        if (obj != null) {
+            return false;
+        }
+        else{
+            return true;
         }
     }
 
