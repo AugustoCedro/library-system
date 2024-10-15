@@ -22,6 +22,7 @@ public class ManagerDaoJDBC implements ManagerDao {
         obj.setName(rs.getString("Name"));
         obj.setEmail(rs.getString("Email"));
         obj.setPhone(rs.getString("Phone"));
+        obj.setPassword(rs.getString("Password"));
         return obj;
     }
 

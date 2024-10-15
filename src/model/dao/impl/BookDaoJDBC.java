@@ -198,7 +198,6 @@ public class BookDaoJDBC implements BookDao {
                 }
                 Book obj = instantiateBook(rs,genre);
                 list.add(obj);
-                return list;
             }
             return list;
         }catch (SQLException e){
