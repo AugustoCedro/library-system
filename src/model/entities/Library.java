@@ -3,6 +3,10 @@ package model.entities;
 import model.dao.*;
 import model.exceptions.InvalidInputException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -145,13 +149,16 @@ public class Library {
         if(mannagerLogged){
             System.out.println("1 -> Operations with the Books of the Library");
             System.out.println("2 -> Operations with the Clients of the Library");
-            System.out.println("3 -> Operations withe the Loans of the Library");
+            System.out.println("3 -> Operations with the Loans of the Library");
             int n = sc.nextInt();
             if(n == 1){
                 bookOperations();
             }
             if(n == 2){
                 clientOperations();
+            }
+            if(n == 3){
+                loanOperations();
             }
         }
     }
@@ -311,7 +318,7 @@ public class Library {
                     clientDao.insert(c);
                     System.out.println("Client added successfully!");
                 }else {
-                    System.out.println("Insert Error, Client already exists!");
+                    System.out.println("Failed to add: Client already exists!");
                 }
             }
             if(n == 2){
@@ -319,10 +326,16 @@ public class Library {
                 String email = sc.nextLine();
                 Client c = clientDao.findByEmail(email);
                 if(!clientExists(c)){
-                    clientDao.deleteByEmail(email);
-                    System.out.println("Client removed successfully!");
+                    List<Loan> list = loanDao.findByEmail(c.getEmail());
+                    if(list.isEmpty()){
+                        clientDao.deleteByEmail(email);
+                        System.out.println("Client removed successfully!");
+                    }else{
+                        System.out.println("Failed to Remove: The Client have Loans associated");
+                    }
+
                 }else{
-                    System.out.println("Remove error, Client not exists!");
+                    System.out.println("Failed to Remove: Client not exists!");
                 }
             }
             if(n == 3){
@@ -338,7 +351,7 @@ public class Library {
                     clientDao.update(c2);
                     System.out.println("Client updated sucessfully!");
                 }else{
-                    System.out.println("Update error, Client not exists!");
+                    System.out.println("Update error: Client not exists!");
                 }
             }
             if(n == 4){
@@ -358,6 +371,8 @@ public class Library {
         }
     }
     protected static void findClientsOperations(){
+
+
 
         Client c;
         List<Client> list;
@@ -405,7 +420,143 @@ public class Library {
 
     }
 
+    protected static void loanOperations(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        while(true){
+            System.out.println("1 -> Search for a Loan by Id");
+            System.out.println("2 -> Search for a Loan by Book Title");
+            System.out.println("3 -> Search for a Loan by Client Email");
+            System.out.println("4 -> Search for a Loan by created date");
+            System.out.println("5 -> Search for a Loan by return Date");
+            System.out.println("6 -> Find all Loans");
+            System.out.println("7 -> Delete a Loan");
+            System.out.println("8 -> Insert a Loan");
+            System.out.println("9 -> Return to Main Menu");
 
+            int n = sc.nextInt();
+            sc.nextLine();
+            if(n == 1){
+                System.out.print("Insert the Loan Id: ");
+                int id = sc.nextInt();
+                Loan l = loanDao.findById(id);
+                if(loanExists(l)){
+                    System.out.println(l);
+                }else{
+                    System.out.println("Failed to Search: Id " + id + " not exists");
+                }
+            }
+            if(n == 2){
+                System.out.print("Insert the Book Title: ");
+                String title = sc.nextLine();
+                List<Loan> list = loanDao.findByTitle(title);
+                if(!list.isEmpty()){
+                    System.out.println("===================");
+                    for(Loan l : list){
+                        System.out.println(l);
+                    }
+                    System.out.println("===================");
+                }else{
+                    System.out.println("Failed to Search: title" + title + " not exists");
+                }
+            }
+            if(n == 3){
+                System.out.print("Insert the Client Email: ");
+                String email = sc.nextLine();
+                List<Loan> list = loanDao.findByEmail(email);
+                if(!list.isEmpty()){
+                    System.out.println("===================");
+                    for(Loan l : list){
+                        System.out.println(l);
+                    }
+                    System.out.println("===================");
+                }else{
+                    System.out.println("Failed to Search: Client email " + email + " not exists");
+                }
+            }
+            if(n == 4){
+
+                System.out.print("Insert the Loan Date dd/MM/yyyy : ");
+                String dateString = sc.nextLine();
+                LocalDate date = LocalDate.parse(dateString,dtf);
+                List<Loan> list = loanDao.findByLoanDate(date);
+                if(!list.isEmpty()){
+                    System.out.println("===================");
+                    for(Loan l : list){
+                        System.out.println(l);
+                    }
+                    System.out.println("===================");
+                }else{
+                    System.out.println("There is no Loans in this Date");
+                }
+            }
+            if(n == 5){
+
+                System.out.print("Insert the Loan Return Date dd/MM/yyyy : ");
+                String dateString = sc.nextLine();
+                LocalDate date = LocalDate.parse(dateString,dtf);
+                List<Loan> list = loanDao.findByReturnDate(date);
+                if(!list.isEmpty()){
+                    System.out.println("===================");
+                    for(Loan l : list){
+                        System.out.println(l);
+                    }
+                    System.out.println("===================");
+                }else{
+                    System.out.println("There is no Loans in this Return Date");
+                }
+            }
+            if(n == 6){
+                List<Loan> list = loanDao.findAll();
+                if(!list.isEmpty()){
+                    System.out.println("===================");
+                    for(Loan l : list){
+                        System.out.println(l);
+                    }
+                    System.out.println("===================");
+                }else{
+                    System.out.println("Failed to Search: No Loans Found");
+                }
+            }
+            if(n == 7){
+                System.out.print("Insert the Loand Id: ");
+                int id = sc.nextInt();
+                Loan l = loanDao.findById(id);
+                if(loanExists(l)){
+                    loanDao.deleteById(id);
+                    System.out.println("Loan removed with successfully");
+                }else{
+                    System.out.println("Failed to Delete: Id " + id + " not exists");
+                }
+            }
+            if(n == 8){
+                System.out.print("Enter the Title of the book to be borrowed: ");
+                String title = sc.nextLine();;
+
+                System.out.println("Enter the email of the Client who will make the loan: ");
+                String email = sc.nextLine();
+
+                Book b = bookDao.findByTitle(title);
+                Client c = clientDao.findByEmail(email);
+
+                System.out.print("Insert the Loan Date dd/MM/yyyy : ");
+                String dateString = sc.nextLine();
+                LocalDate date = LocalDate.parse(dateString,dtf);
+
+                if(bookExists(b) && clientExists(c)){
+                    Loan loan = new Loan(null,b,c,date);
+                    System.out.println("Loan " + loan + " added successfully");
+
+                }
+                else{
+                    System.out.println("Failed to insert: data insert error");
+                }
+            }
+            if(n == 9){
+                break;
+            }
+
+        }
+    }
     protected static boolean bookExists(Book b){
         if(b != null){
             return true;
@@ -431,9 +582,6 @@ public class Library {
         }
     }
     protected static boolean clientExists(Client c){
-        if(c == null){
-            return true;
-        }
         Client obj = clientDao.findByEmail(c.getEmail());
         if (obj != null) {
             return false;
