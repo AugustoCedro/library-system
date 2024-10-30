@@ -33,8 +33,7 @@ public class Library {
                     if(!clientLogged){
                         break;
                     }else{
-                        System.out.println("adwiahwdhiawdihawdadw");
-                        break;
+                        clientSystem(clientLogged);
                     }
                 }
                 else if (n == 2) {
@@ -54,6 +53,69 @@ public class Library {
             }
         }
     }
+
+    private static void clientSystem(boolean clientLogged) {
+        while (true){
+            try{
+                if(clientLogged) {
+                    System.out.println("1 -> Operations with the Books of the Library");
+                    System.out.println("2 -> Operations with the Clients of the Library");
+                    System.out.println("3 -> Operations with the Loans of the Library");
+                    int n = sc.nextInt();
+                    if (n == 1) {
+                        bookClientOperations();
+                    } else if (n == 2) {
+                        clientClientOperations();
+                    } else if (n == 3) {
+                        loanClientOperations();
+                    } else {
+                        throw new InputMismatchException();
+                    }
+                }
+            } catch (InputMismatchException e){
+                System.out.println("ERROR: Invalid Input, try again");
+                sc.nextLine();
+            }
+        }
+    }
+
+    protected static void managerSystem(boolean mannagerLogged){
+        while (true) {
+            try{
+                if(mannagerLogged){
+                    System.out.println("1 -> Operations with the Books of the Library");
+                    System.out.println("2 -> Operations with the Clients of the Library");
+                    System.out.println("3 -> Operations with the Loans of the Library");
+                    int n = sc.nextInt();
+                    if(n == 1){
+                        bookManagerOperations();
+
+                    }
+                    else if(n == 2){
+                        clientManagerOperations();
+
+                    }
+                    else if(n == 3){
+                        loanManagerOperations();
+
+                    }else{
+                        throw new InputMismatchException();
+                    }
+                }
+            }catch (InputMismatchException e){
+                System.out.println("ERROR: Invalid Input, try again");
+                sc.nextLine();
+            }
+
+        }
+
+    }
+
+
+
+
+
+
 
     protected static boolean managerLogin() {
         while (true) {
@@ -85,7 +147,6 @@ public class Library {
         }
         return true;
     }
-
     protected static boolean clientLogin() {
         while (true) {
             try {
@@ -136,6 +197,7 @@ public class Library {
         }
         return true;
     }
+
     protected static boolean processUserChoice () {
         while (true) {
             try {
@@ -162,36 +224,38 @@ public class Library {
 
     }
 
-    protected static void managerSystem(boolean mannagerLogged){
+    private static void bookClientOperations() {
         while (true) {
-            try{
-                if(mannagerLogged){
-                    System.out.println("1 -> Operations with the Books of the Library");
-                    System.out.println("2 -> Operations with the Clients of the Library");
-                    System.out.println("3 -> Operations with the Loans of the Library");
-                    int n = sc.nextInt();
-                    if(n == 1){
-                        bookOperations();
+            try {
+                System.out.println("1 -> Get all Books from Library");
+                System.out.println("2 -> Search a specific Book from Library");
+                System.out.println("3 -> Return to Client Menu");
+                int n = sc.nextInt();
+                if (n == 1) {
+                    List<Book> list = bookDao.findAll();
+                    System.out.println("===================");
+                    for (Book b : list) {
+                        System.out.println(b);
                     }
-                    else if(n == 2){
-                        clientOperations();
-                    }
-                    else if(n == 3){
-                        loanOperations();
-                    }else{
-                        throw new InputMismatchException();
-                    }
+                    System.out.println("===================");
+                }
+                else if (n == 2) {
+                    findBooksOperations();
+                }
+
+                else if (n == 3) {
+                    break;
+                }
+                else{
+                    throw new InputMismatchException();
                 }
             }catch (InputMismatchException e){
                 System.out.println("ERROR: Invalid Input, try again");
                 sc.nextLine();
             }
-
         }
-
     }
-
-    protected static void bookOperations() {
+    protected static void bookManagerOperations() {
         while (true) {
             try {
                 System.out.println("1 -> Insert a Book to Library");
@@ -344,7 +408,44 @@ public class Library {
             throw new InputMismatchException();
         }
     }
-    protected static void clientOperations(){
+
+    private static void clientClientOperations() {
+        while(true){
+        try{
+            System.out.println("1 -> Update your data");
+            System.out.println("2 -> Return to Manager Menu");
+
+            int n = sc.nextInt();
+            if(n == 1){
+                sc.nextLine();
+                System.out.print("Email your Email: ");
+                String email = sc.nextLine();
+                Client c = clientDao.findByEmail(email);
+
+                if(clientDao.findByEmail(email) != null){
+                    System.out.print("New Name: ");
+                    String name = sc.nextLine();
+                    System.out.println("New email: ");
+                    email = sc.nextLine();
+                    Client c2 = new Client(c.getId(),name,email);
+                    clientDao.update(c2);
+                    System.out.println("Client updated sucessfully!");
+                }else{
+                    System.out.println("Update error: Client not exists!");
+                }
+            }
+            else if(n == 2){
+                break;
+            }else{
+                throw new InputMismatchException();
+            }
+        }catch (InputMismatchException e){
+            System.out.println("ERROR: Invalid Input, try again");
+            sc.nextLine();
+        }
+    }
+    }
+    protected static void clientManagerOperations(){
         while(true){
             try{
                 System.out.println("1 -> Insert a Client to Library");
@@ -479,7 +580,70 @@ public class Library {
 
     }
 
-    protected static void loanOperations(){
+    private static void loanClientOperations() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        while(true){
+            try{
+                System.out.println("1 -> Search your loans");
+                System.out.println("2 -> Make a loan");
+                System.out.println("3 -> Return to Main Menu");
+
+                int n = sc.nextInt();
+
+
+                if(n == 1){
+                    sc.nextLine();
+                    System.out.print("Insert your Email: ");
+                    String email = sc.nextLine();
+                    List<Loan> list = loanDao.findByEmail(email);
+                    if(!list.isEmpty()){
+                        System.out.println("===================");
+                        for(Loan l : list){
+                            System.out.println(l);
+                        }
+                        System.out.println("===================");
+                    }else{
+                        System.out.println("Failed to Search: Client email " + email + " not exists");
+                    }
+                }
+
+                else if(n == 2){
+                    sc.nextLine();
+                    System.out.print("Enter the Title of the book to be borrowed: ");
+                    String title = sc.nextLine();;
+
+                    System.out.println("Enter the email of the Client who will make the loan: ");
+                    String email = sc.nextLine();
+
+                    Book b = bookDao.findByTitle(title);
+                    Client c = clientDao.findByEmail(email);
+
+                    System.out.print("Insert the Loan Date dd/MM/yyyy : ");
+                    String dateString = sc.nextLine();
+                    LocalDate date = LocalDate.parse(dateString,dtf);
+                    System.out.println(date);
+                    if(bookExists(b) && clientExists(c)){
+                        Loan loan = new Loan(null,b,c,date);
+                        loanDao.insert(loan);
+                        System.out.println("Loan  added successfully");
+
+                    }
+                    else{
+                        System.out.println("Failed to insert: data insert error");
+                    }
+                }
+                else if(n == 3){
+                    break;
+                }else{
+                    throw new InputMismatchException();
+                }
+            }catch (InputMismatchException e){
+                System.out.println("ERROR: Invalid Input, try again");
+                sc.nextLine();
+            }
+     }
+    }
+    protected static void loanManagerOperations(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         while(true){
             try{
@@ -630,6 +794,7 @@ public class Library {
 
         }
     }
+
     protected static boolean bookExists(Book b){
         if(b != null){
             return true;
@@ -664,4 +829,3 @@ public class Library {
     }
 
 }
-

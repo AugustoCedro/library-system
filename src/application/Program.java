@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+
 public class Program {
     public static void main(String[] args) {
 
@@ -19,8 +20,8 @@ public class Program {
         //List<Client> clientList = CSVReader.readClients("clients.csv");
         //List<Loan> loanList = CSVReader.readLoans("loans.csv");
 
-
         Library.menu();
+
 
 
 
